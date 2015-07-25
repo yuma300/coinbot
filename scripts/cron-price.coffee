@@ -8,7 +8,7 @@ module.exports = (robot) ->
       envelope = room: "#bitcoin"
       robot.send envelope, "1BTC = " + last_price + "JPY @zaif https://zaif.jp/"
     bt.getPrice 'coincheck', (last_price)->
-      envelope = room: "#bottest"
+      envelope = room: "#bitcoin"
       robot.send envelope, "1BTC = " + last_price + "JPY @coincheck https://coincheck.jp/"
   )
   cronTest.start()
