@@ -10,18 +10,14 @@
 https = require 'https'
 
 module.exports = (robot) ->
-   robot.respond /price bitcoin zaif/, (res) ->
-     https.get 'https://api.zaif.jp/api/1/ticker/btc_jpy', (response) ->
-       body = '';
-       response.on 'data', (chunk) ->
-         body += chunk;
-       response.on 'end', () ->
-         res.send '1BTC = ' + JSON.parse(body).last + 'JPY'
+  robot.respond /price bitcoin zaif/, (res) ->
+    BitcoinTool = require("./bitcoin-tool")
+    bt = new BitcoinTool()
+    bt.getPrice 'zaif', (last_price)->
+      res.send '1BTC = ' + last_price + 'JPY'
 
-   robot.respond /price bitcoin coincheck/, (res) ->
-     https.get 'https://coincheck.jp/api/ticker', (response) ->
-       body = '';
-       response.on 'data', (chunk) ->
-         body += chunk;
-       response.on 'end', () ->
-         res.send '1BTC = ' + JSON.parse(body).last + 'JPY'
+  robot.respond /price bitcoin coincheck/, (res) ->
+    BitcoinTool = require("./bitcoin-tool")
+    bt = new BitcoinTool()
+    bt.getPrice 'coincheck', (last_price)->
+      res.send '1BTC = ' + last_price + 'JPY'
