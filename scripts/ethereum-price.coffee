@@ -9,14 +9,8 @@
 #   These are from the scripting documentation: https://github.com/github/hubot/blob/master/docs/scripting.md
 
 module.exports = (robot) ->
-  robot.respond /price bitcoin zaif/, (res) ->
-    BitcoinTool = require("./bitcoin-tool")
-    bt = new BitcoinTool()
-    bt.getPrice 'zaif', (last_price)->
-      res.send '1BTC = ' + last_price + 'JPY'
-
-  robot.respond /price bitcoin coincheck/, (res) ->
-    BitcoinTool = require("./bitcoin-tool")
-    bt = new BitcoinTool()
-    bt.getPrice 'coincheck', (last_price)->
-      res.send '1BTC = ' + last_price + 'JPY'
+  robot.respond /price ethereum kraken/, (res) ->
+    EthereumTool = require("./ethereum-tool")
+    et = new EthereumTool()
+    et.getPrice 'kraken', (last_price)->
+      res.send '1ETH = ' + last_price + 'BTC'
