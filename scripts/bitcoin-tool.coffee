@@ -1,5 +1,4 @@
 https = require 'https'
-Promise = require('bluebird');
 
 class BitcoinTool
   getPrice: (exchangeplace, callback) ->
@@ -16,6 +15,4 @@ class BitcoinTool
         body += chunk;
       response.on 'end', () ->
         callback(JSON.parse(body).last)
-        #res.send '1BTC = ' + JSON.parse(body).last + 'JPY'
-        #return JSON.parse(body).last
 module.exports = BitcoinTool
