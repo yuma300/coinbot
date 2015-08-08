@@ -18,6 +18,9 @@ module.exports = (robot) ->
     et.getPrice 'kraken', (last_price)->
       envelope = room: "#ethereum"
       robot.send envelope, "1ETH = " + last_price + "BTC @kraken https://www.kraken.com/"
+    et.getPrice 'poloniex', (last_price)->
+      envelope = room: "#ethereum"
+      robot.send envelope, "1ETH = " + last_price + "BTC @poloniex https://poloniex.com"
   )
   cronEthereum.start()
 
