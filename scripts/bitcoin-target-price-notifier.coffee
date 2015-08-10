@@ -1,17 +1,30 @@
+class BitcoinTargetPriceNotifier
+  constructor: (@robot) ->
+  showNotifys: (res) ->
+    for notify, index in @robot.brain.data.bitcoin_target_price_notifys
+      res.send(notify.type + ' ' + notify.price)
+  checkNotifys: (res) ->
+    for notify, index in @robot.brain.data.bitcoin_target_price_notifys
+      res.send(notify.type + ' ' + notify.price)
+      
 module.exports = (robot) ->
-  robot.respond(/show reminders$/i, (msg) ->
-    for notify, index in robot.brain.data.notifys
-      msg.send(notify.action)
+  notifier = new BitcoinTargetPriceNotifier(robot)
+  robot.brain.data.bitcoin_target_price_notifys = []
+
+  robot.respond(/check notifys$/i, (res) ->
+    notifier.checkNotifys(res)
   )
 
-  robot.respond(/remind me (lower|higher) (.+?) to (.*)/i, (msg) ->
-    type = msg.match[1]
-    price = msg.match[2]
-    action = msg.match[3]
+  robot.respond(/show notifys$/i, (res) ->
+    notifier.showNotifys(res)
+  )
+
+  robot.respond(/notify-target-price bitcoin (lower|higher) ([0-9]+$)/i, (res) ->
+    type = res.match[1]
+    price = res.match[2]
     options =
       type: type,
-      price: price,
-      action: action
-    robot.brain.data.notifys.push(options)
-    msg.send "I'll remind you to #{price}"
+      price: price
+    robot.brain.data.bitcoin_target_price_notifys.push(options)
+    res.send "I'll remind you to #{type} #{price}"
   )
