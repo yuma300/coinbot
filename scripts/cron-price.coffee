@@ -24,3 +24,12 @@ module.exports = (robot) ->
   )
   cronEthereum.start()
 
+  cronBitcoinNotify = new cronJob('00 */2 * * * *', () =>
+    BitcoinTargetPriceNotifier = require("./bitcoin-target-price-notifier")
+    notifier = new BitcoinTargetPriceNotifier(robot)
+    notifier.checkNotifys (notify) ->
+      envelope = room: "#bitcoin"
+      robot.send envelope, "@#{notify.envelope.user.name} bitcoin price #{notify.type} than #{notify.price} at #{notify.place}"
+  )
+  cronBitcoinNotify.start()
+
