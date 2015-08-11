@@ -8,15 +8,29 @@ class BitcoinTargetPriceNotifier
   checkNotifys: (res) ->
     BitcoinTool = require("./bitcoin-tool")
     bt = new BitcoinTool()
-    for notify, index in @robot.brain.data.bitcoin_target_price_notifys
-      if notify.place == "zaif"
+    robot = @robot
+    async.series [
+      (callback) ->
         bt.getPrice 'zaif', (last_price)->
-          if notify.type == "higher" && notify.price < last_price
+          callback(null, last_price);
+      (callback) ->
+        bt.getPrice 'coincheck', (last_price)->
+          callback(null, last_price);
+    ], (err, results) ->
+      if (err) 
+        throw err;
+      console.log('all done');
+      console.log(results);
+      zaif_price = results[0]
+      coincheck_price = results[1]
+      for notify, index in robot.brain.data.bitcoin_target_price_notifys
+        if notify.place == "zaif"
+          if notify.type == "higher" && notify.price < zaif_price
             res.send 'higher!!'
-      else if notify.place == "coincheck"
-        res.send '1BTC = JPY'
-        #bt.getPrice 'coincheck', (last_price)->
-        #  res.send '1BTC = ' + last_price + 'JPY'
+        else if notify.place == "coincheck"
+          res.send '1BTC = JPY'
+          #bt.getPrice 'coincheck', (last_price)->
+          #  res.send '1BTC = ' + last_price + 'JPY'
     
     #@robot.brain.data.bitcoin_target_price_notifys = []
     
