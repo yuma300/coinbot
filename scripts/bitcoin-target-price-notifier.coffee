@@ -2,9 +2,11 @@ async = require('async');
 
 class BitcoinTargetPriceNotifier
   constructor: (@robot) ->
+
   showNotifys: (res) ->
     for notify, index in @robot.brain.data.bitcoin_target_price_notifys
-      res.send(notify.type + ' ' + notify.price + ' ' + notify.place)
+      res.send(notify.type + ' ' + notify.price + ' ' + notify.place + ' ' + notify.envelope)
+
   checkNotifys: (res) ->
     BitcoinTool = require("./bitcoin-tool")
     bt = new BitcoinTool()
@@ -19,23 +21,16 @@ class BitcoinTargetPriceNotifier
     ], (err, results) ->
       if (err) 
         throw err;
-      console.log('all done');
-      console.log(results);
-      zaif_price = results[0]
-      coincheck_price = results[1]
+      prices = { "zaif":results[0], "coincheck":results[1] }
       for notify, index in robot.brain.data.bitcoin_target_price_notifys
-        if notify.place == "zaif"
-          if notify.type == "higher" && notify.price < zaif_price
-            res.send 'higher!!'
-        else if notify.place == "coincheck"
-          res.send '1BTC = JPY'
-          #bt.getPrice 'coincheck', (last_price)->
-          #  res.send '1BTC = ' + last_price + 'JPY'
+        if (notify.type == "higher" && notify.price < prices[notify.place]) || (notify.type == "lower" && notify.price > prices[notify.place])
+          outputNotification(res, notify)
+          robot.brain.data.bitcoin_target_price_notifys[index] = null
+      robot.brain.data.bitcoin_target_price_notifys = robot.brain.data.bitcoin_target_price_notifys.filter(Boolean);
+   
+    outputNotification = (res, notify) ->
+      res.send "@#{notify.envelope.user.name} bitcoin price #{notify.type} than #{notify.price} at #{notify.place}"
     
-    #@robot.brain.data.bitcoin_target_price_notifys = []
-    
-    
-      
 module.exports = (robot) ->
   notifier = new BitcoinTargetPriceNotifier(robot)
   robot.brain.data.bitcoin_target_price_notifys = []
@@ -55,7 +50,8 @@ module.exports = (robot) ->
     options =
       type: type,
       price: price,
-      place: place
+      place: place,
+      envelope: res.envelope
     robot.brain.data.bitcoin_target_price_notifys.push(options)
     res.send "I'll remind you to #{type} #{price}"
   )
