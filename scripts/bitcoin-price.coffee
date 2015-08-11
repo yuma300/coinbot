@@ -32,7 +32,7 @@ module.exports = (robot) ->
       price: price,
       place: place,
       envelope: res.envelope
-    robot.brain.data.bitcoin_target_price_notifys.push(options)
+    notifier.addNotify(options)
     res.send "I'll remind you to #{type} #{price}"
   )
 

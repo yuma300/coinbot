@@ -2,6 +2,8 @@ async = require('async');
 
 class BitcoinTargetPriceNotifier
   constructor: (@robot) ->
+  addNotify: (options) ->
+    @robot.brain.data.bitcoin_target_price_notifys.push(options)
 
   showNotifys: (callback) ->
     for notify, index in @robot.brain.data.bitcoin_target_price_notifys
