@@ -13,17 +13,17 @@ module.exports = (robot) ->
   notifier = new BitcoinTargetPriceNotifier(robot)
   robot.brain.data.bitcoin_target_price_notifys = []
 
-  robot.respond(/check notifys$/i, (res) ->
+  robot.respond(/check bitcoin price notifys$/i, (res) ->
     notifier.checkNotifys (notify) ->
       res.send "@#{notify.envelope.user.name} bitcoin price #{notify.type} than #{notify.price} at #{notify.place}"
   )
 
-  robot.respond(/show notifys$/i, (res) ->
+  robot.respond(/show bitcoin price notifys$/i, (res) ->
     notifier.showNotifys (notify) ->
-      res.send notify.type + ' ' + notify.price + ' ' + notify.place + ' ' + notify.envelope
+      res.send 'bitcoin price ' + notify.type + ' ' + notify.price + ' ' + notify.place + ' ' + notify.envelope.user.name
   )
 
-  robot.respond(/notify-target-price bitcoin (lower|higher) (zaif|coincheck) ([0-9]+$)/i, (res) ->
+  robot.respond(/add bitcoin price notify (lower|higher) (zaif|coincheck) ([0-9]+$)/i, (res) ->
     type = res.match[1]
     place = res.match[2]
     price = res.match[3]
